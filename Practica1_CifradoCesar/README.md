@@ -1,3 +1,10 @@
+Bueno Hernández Héctor Daniel
+Cruz Buenavista Lesliee Sarahí
+Fernández Cano Iván Antonio
+Flores Rivera Brenda Lucrecia
+Miranda Becerril Francisco Balam
+Villagrán Segura Denisse Abril
+
 En esta práctica Realizamos un código para implementar el cifrado cesar un método que desplaza cada letra del mensaje un número fijo de posiciones en el alfabeto, definido por una llave. Para encriptar, se recorre el texto carácter por carácter, ignorando los espacios, y si el carácter es letra mayúscula o minúscula, se ajusta su valor ASCII para aplicar el desplazamiento circular dentro del rango de letras. La función de desencriptado realiza el proceso inverso, restando la llave para recuperar el texto original.
 
 Para implementarlo se planteo primero utilizar un arreglo dinámico con apuntadores (char* con malloc) para almacenar el mensaje, lo que permite manejar cadenas de longitud variable sin depender de un arreglo estático. Al final, se libera la memoria con free para evitar fugas.
