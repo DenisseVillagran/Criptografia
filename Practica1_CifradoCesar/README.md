@@ -28,10 +28,6 @@ Las funciones `encriptado` y `descencriptado` trabajan recorriendo el arreglo de
 
 El programa principal (`main`) solicita al usuario el mensaje y la llave, presenta un menú para elegir acción y, según la opción seleccionada, llama a la función adecuada, mostrando el resultado hasta que el usuario decida salir.  
 
----
-
-## Conclusión  
-
 La implementación del cifrado César se basó en su **simplicidad y eficiencia**, permitiendo transformar el mensaje directamente sobre el mismo arreglo de caracteres sin estructuras adicionales, lo que optimiza el uso de memoria.  
 
 El empleo de operaciones aritméticas sobre los valores ASCII facilita distinguir entre mayúsculas y minúsculas, mientras que el uso del operador módulo asegura el comportamiento circular del cifrado. Esto garantiza que el mensaje pueda ser recuperado de manera exacta al aplicar el proceso inverso. La solución es clara, directa y suficiente para comprender el principio fundamental del algoritmo.  
@@ -67,10 +63,6 @@ The functions `encriptado` and `descencriptado` work by iterating through the ch
 - In `descencriptado`, the procedure is the same, but subtracting the key to undo the shift.  
 
 The main program (`main`) requests the message and key from the user, displays a menu to choose an action, and, depending on the option selected, calls the corresponding function, showing the result until the user decides to exit.  
-
----
-
-## Conclusion  
 
 The implementation of the Caesar cipher was based on its **simplicity and efficiency**, allowing the message to be transformed directly within the same character array without additional structures, thus optimizing memory usage.  
 
