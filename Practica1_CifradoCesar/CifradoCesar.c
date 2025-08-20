@@ -9,35 +9,24 @@
 char* encriptado(char* mensaje, int llave){
     int i;
     for (i=0; i<strlen(mensaje); i++){
-        if (isupper(mensaje[i])) {
+        if (isupper(mensaje[i])) 
             mensaje[i] = 65 + ((mensaje[i] - 65 + llave)) % 26;
-        }
-        else if (islower(mensaje[i])) {
+
+        else if (islower(mensaje[i]))
             mensaje[i] = 97 + ((mensaje[i] - 97 + llave)) % 26;
-        }  
     }
     return mensaje;
 }
 
 char* descencriptado(char* mensaje, int llave){
     int i;
-    int esMayus;
     for (i=0; i<strlen(mensaje); i++){
         if (isupper(mensaje[i]))
-            esMayus = true;
-        else if (islower(mensaje[i]))
-            esMayus = false;
-        else
-            continue;   // Cualquier otro caracter se lo salta
-
-        mensaje[i] -= llave;
-        if (esMayus && mensaje[i] < 65){
-            mensaje[i] = 91 - (65 - mensaje[i]);
-        }
+            mensaje[i] = 65 + (((mensaje[i] - 65 - llave) + 26)) % 26;
         
-        if (!esMayus && mensaje[i] < 97){
-            mensaje[i] = 123 - (97 - mensaje[i]);
-        }
+        else if (islower(mensaje[i])) 
+            mensaje[i] = 97 + (((mensaje[i] - 97 - llave) + 26)) % 26;
+        
     }
     return mensaje;
 }
@@ -71,7 +60,7 @@ int main()
     printf("\nCadena descencriptada: %s", descencriptado(mensaje, 10));
     printf("\n");
 
-    strcpy(mensaje, "estoEsUnaCadenaLarga");
+    strcpy(mensaje, "esto Es Una Cadena Larga");
     printf("\nCadena original: %s", mensaje);
     printf("\nCadena encriptada: %s", encriptado(mensaje, 24));
     printf("\nCadena descencriptada: %s", descencriptado(mensaje, 24));
