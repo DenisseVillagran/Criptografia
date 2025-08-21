@@ -1,16 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+
+#define true 1
+#define false 0
 
 char* encriptado(char* mensaje, int llave){
     int i;
     for (i=0; i<strlen(mensaje); i++){
-        if (mensaje[i]== 32)
-            continue;
-        else if (mensaje[i] >= 65 && mensaje[i] <= 90)
-            mensaje[i] = 65 + (mensaje[i] - 65 + llave) % 26;
-        else if (mensaje[i] >= 97 && mensaje[i] <= 122) 
-            mensaje[i] = 97 + (mensaje[i] - 97 + llave) % 26;
+        if (isupper(mensaje[i])) 
+            mensaje[i] = 65 + ((mensaje[i] - 65 + llave)) % 26;
+
+        else if (islower(mensaje[i]))
+            mensaje[i] = 97 + ((mensaje[i] - 97 + llave)) % 26;
     }
     return mensaje;
 }
@@ -18,12 +21,12 @@ char* encriptado(char* mensaje, int llave){
 char* descencriptado(char* mensaje, int llave){
     int i;
     for (i=0; i<strlen(mensaje); i++){
-        if (mensaje[i]== 32)
-            continue;
-        else if (mensaje[i] >= 65 && mensaje[i] <= 90)
-            mensaje[i] = 65 + (mensaje[i] - 65 - llave) % 26;
-        else if (mensaje[i] >= 97 && mensaje[i] <= 122) 
-            mensaje[i] = 97 + (mensaje[i] - 97 - llave) % 26;
+        if (isupper(mensaje[i]))
+            mensaje[i] = 65 + (((mensaje[i] - 65 - llave) + 26)) % 26;
+        
+        else if (islower(mensaje[i])) 
+            mensaje[i] = 97 + (((mensaje[i] - 97 - llave) + 26)) % 26;
+        
     }
     return mensaje;
 }
@@ -38,6 +41,43 @@ int main()
         printf("Error de memoria\n");
         return 1;
     }
+
+    strcpy(mensaje, "Hola");
+    printf("\nCadena original: %s", mensaje);
+    printf("\nCadena encriptada: %s", encriptado(mensaje, 6));
+    printf("\nCadena descencriptada: %s", descencriptado(mensaje, 6));
+    printf("\n");
+
+    strcpy(mensaje, "PruebaCifrado");
+    printf("\nCadena original: %s", mensaje);
+    printf("\nCadena encriptada: %s", encriptado(mensaje, 3));
+    printf("\nCadena descencriptada: %s", descencriptado(mensaje, 3));
+    printf("\n");
+
+    strcpy(mensaje, "AbcDefGhiJklMnoPqr");
+    printf("\nCadena original: %s", mensaje);
+    printf("\nCadena encriptada: %s", encriptado(mensaje, 10));
+    printf("\nCadena descencriptada: %s", descencriptado(mensaje, 10));
+    printf("\n");
+
+    strcpy(mensaje, "esto Es Una Cadena Larga");
+    printf("\nCadena original: %s", mensaje);
+    printf("\nCadena encriptada: %s", encriptado(mensaje, 24));
+    printf("\nCadena descencriptada: %s", descencriptado(mensaje, 24));
+    printf("\n");
+
+    strcpy(mensaje, "AbcD/eF8Gh*I[jK");
+    printf("\nCadena original: %s", mensaje);
+    printf("\nCadena encriptada: %s", encriptado(mensaje, 15));
+    printf("\nCadena descencriptada: %s", descencriptado(mensaje, 15));
+    printf("\n");
+
+    strcpy(mensaje, "X");
+    printf("\nCadena original: %s", mensaje);
+    printf("\nCadena encriptada: %s", encriptado(mensaje, 17));
+    printf("\nCadena descencriptada: %s", descencriptado(mensaje, 17));
+    printf("\n");
+
     
     printf("Ingresa tu mensaje: \n");
     fflush(stdin);
