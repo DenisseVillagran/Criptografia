@@ -13,9 +13,11 @@
 ## Descripción
 
 **Cifrado Vigenère**
+
 aaaa
 
 **Criptoanálisis Kasiski**
+
 El método de Kasiski (F. Kasiski, 1863) es una técnica clásica para atacar el cifrado de Vigenère. Se basa en que secuencias 
 de letras repetidas del texto cifrado suelen originarse en la misma palabra del texto plano que quedó alineada con la misma 
 porción de la clave. Midiendo la distancia entre esas repeticiones y calculando su MCD, se estima la longitud de la clave. 
@@ -27,6 +29,7 @@ un César independiente usando frecuencias del idioma. Es una técnica simple y 
 ## Implementación
 
 **Cifrado Vigenère**
+
 aaa
 
 **Criptoanálisis Kasiski**
