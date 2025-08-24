@@ -9,12 +9,11 @@
 - Villagrán Segura Denisse Abril  
 
 ---
----
 
 ## Descripción
 
 **Cifrado Vigenère**
-
+aaaa
 
 **Criptoanálisis Kasiski**
 El método de Kasiski (F. Kasiski, 1863) es una técnica clásica para atacar el cifrado de Vigenère. Se basa en que secuencias 
@@ -28,7 +27,7 @@ un César independiente usando frecuencias del idioma. Es una técnica simple y 
 ## Implementación
 
 **Cifrado Vigenère**
-
+aaa
 
 **Criptoanálisis Kasiski**
 
@@ -70,7 +69,7 @@ Para cada desplazamiento `K (0..25)` se suma cuántas letras hay en las posicion
 a _A_, _E_, _O_, _T_. Los `K` con mayor suma son candidatos a la letra de la clave en esa posición (la letra es `'A' + K`).
 
 Se imprimen los TOP `TOP_CAND` candidatos por cada subcriptograma y una clave sugerida tomando el mejor de cada posición.
-==Ojo: no se descifra el texto aquí; solo se proponen posibles llaves.==
+Ojo: no se descifra el texto aquí; solo se proponen posibles llaves.
 
 
 
