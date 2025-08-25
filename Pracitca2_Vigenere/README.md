@@ -47,10 +47,12 @@ repeticiones de 3 letras suelen indicar que una misma palabra del texto plano co
 Cada vez que hay coincidencia, se calcula la distancia `d = j - i` y se guarda en un vector dinámico 
 `int *distancias`. Se obtiene una lista de distancias entre repeticiones.
 
-**2) Calcular MCD de todas las distancias → longitud de la llave**
+**2) Encontramos divisores comunes para determinar la longitud de la clave**
 
 Toma todas las distancias y calcula su Máximo Común Divisor usando Euclides (`mcd`). El MCD de esas distancias suele ser la 
 longitud de la clave (cuántas letras tiene). Se imprime el vector de distancias y el MCD, guardado en `int llave`.
+
+Para un mejor funcionamiento, también dejamos los divisores de las distancias y seleccionamos los más frecuentes para mejorar la detección de la longitud real de la clave, en especial cuando hay múltiples repeticiones con diferentes distancias.
 
 **3) Construir subcriptogramas según la llave**
 
@@ -63,17 +65,13 @@ Se crea un arreglo de punteros `char **subs`, y cada subcriptograma se llena con
 muestra cada subcriptograma (C_A, C_B, C_C, …) para que puedas ver su contenido. A nivel teórico, cada subcriptograma está 
 cifrado por un César distinto (una letra de la clave).
 
-**4) Ataque estadístico simple**
+**4) Ataque estadístico con chi-cuadrado**
 
-En inglés, las letras _A_, _E_, _O_, _T_ son muy frecuentes. Si un subcriptograma fue cifrado con un César de desplazamiento `K`, 
-al “descifrar” mentalmente con `K` deberían aparecer muchas _A/E/O/T_ en el resultado.
+En cada sucriptograma probamos cada posible desplazamiento (0-25) y calculamos el estadístico chi-cuadrado, el cual compara la distribución de frecuencias del terxto descifrado con las frecuencias esperadas del español. El desplazamiento que produce el valor chi-cuadrado más bajo se usa como letra de clave para la posición.
 
-Para cada desplazamiento `K (0..25)` se suma cuántas letras hay en las posiciones `K + {0, 4, 14, 19} (mod 26)`, que corresponden 
-a _A_, _E_, _O_, _T_. Los `K` con mayor suma son candidatos a la letra de la clave en esa posición (la letra es `'A' + K`).
+**5) Descifrado de los posibles mensajes**
 
-Se imprimen los TOP `TOP_CAND` candidatos por cada subcriptograma y una clave sugerida tomando el mejor de cada posición.
-Ojo: no se descifra el texto aquí; solo se proponen posibles llaves.
-
+Una vez estimada la clave completa, se procede a descifrar el mensaje completo utilizando el cifrado Vigenère inverso, mostrando el texto plano recuperado de cada una de las posibles claves.
 
 
 
