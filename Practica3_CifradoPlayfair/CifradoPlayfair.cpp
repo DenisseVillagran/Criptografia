@@ -68,6 +68,25 @@ string limpiarMensaje(string mensaje){
     return mensajeLimpio;
 }
 
+void prepararPares(string& mensaje){
+    int sizeM = mensaje.size();
+
+    for(int i=0; i<sizeM; i+=2){
+        // la ultima letra quedó solita, se agrega x al final
+        if(i == sizeM - 1){
+            mensaje += "x";
+            break;
+        }
+
+        // Ambas letras son iguales, se inserta una x entre ellas
+        if(mensaje[i] == mensaje[i+1]){
+            mensaje.insert(i+1, 1, 'x');
+            sizeM++;
+        }
+    }
+}
+
+
 string encriptado(string& mensaje, string llave){
 
     return mensaje;
@@ -100,14 +119,20 @@ int main() {
     for(int i = 0; i < mensaje.length(); i++) {
         mensaje[i] = tolower(mensaje[i]);
     }
-    mensaje = limpiarMensaje(mensaje);
-    cout << "Mensaje: " << mensaje << endl;
+    
 
     cout << "Ingresa tu llave: " << endl;
     getline(cin, llave);
     for(int i = 0; i < llave.length(); i++) {
         llave[i] = tolower(llave[i]);
     }
+
+    // Se limpian la llave y el mensaje
+
+    mensaje = limpiarMensaje(mensaje);
+    prepararPares(mensaje);
+    cout << "Mensaje: " << mensaje << endl;
+
     llave = limpiarMensaje(llave);
     cout << "llave: " << llave << endl; 
 
