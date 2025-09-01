@@ -1,10 +1,11 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include <string.h>
+// #include <ctype.h>
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cctype> 
 
 using namespace std;
 
@@ -54,11 +55,25 @@ void generadorMatriz(string llave) {
     }
 }
 
-/*string encriptado(string mensaje, string llave){
-    
+
+string limpiarMensaje(string mensaje){
+    int sizeM = mensaje.size();
+    string mensajeLimpio;
+
+    for(int i=0; i<sizeM; i++){
+        if(mensaje[i] != 32){
+             mensajeLimpio = mensajeLimpio + mensaje[i];
+        }
+    }
+    return mensajeLimpio;
+}
+
+string encriptado(string& mensaje, string llave){
+
     return mensaje;
 }
 
+/*
 string descencriptado(string mensaje, string llave){
     int i, x, y, j=0;
     int longitudLlave = strlen(llave);
@@ -82,9 +97,19 @@ int main() {
 
     cout << "Ingresa tu mensaje: " << endl;
     getline(cin, mensaje);
+    for(int i = 0; i < mensaje.length(); i++) {
+        mensaje[i] = tolower(mensaje[i]);
+    }
+    mensaje = limpiarMensaje(mensaje);
+    cout << "Mensaje: " << mensaje << endl;
 
     cout << "Ingresa tu llave: " << endl;
     getline(cin, llave);
+    for(int i = 0; i < llave.length(); i++) {
+        llave[i] = tolower(llave[i]);
+    }
+    llave = limpiarMensaje(llave);
+    cout << "llave: " << llave << endl; 
 
     do {
         cout << "Ingrese la opción que desee ejecutar:" << endl;
