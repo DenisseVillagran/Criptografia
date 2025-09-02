@@ -5,12 +5,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <cctype> 
+#include <cctype>
+#include <utility>
 
 using namespace std;
-
-#define true 1
-#define false 0
 
 char matriz[5][5]; //Matriz generada
 
@@ -86,6 +84,16 @@ void prepararPares(string& mensaje){
     }
 }
 
+// Funcion para devolver la fila, columna de la letra que estemos buscando
+pair<int, int> buscarLetra(char letra){
+    for(int i=0; i<5; i++){
+        for(int j=0; j<5; j++){
+            if(letra == matriz[i][j])
+                return {i, j};  
+        }
+    }
+    return {-1,-1}; // la letra no fue encontrada, error
+}
 
 string encriptado(string& mensaje, string llave){
 
