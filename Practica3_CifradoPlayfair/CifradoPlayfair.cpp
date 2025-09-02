@@ -84,6 +84,22 @@ void prepararPares(string& mensaje){
     }
 }
 
+void elimiarX(string& mensaje){
+    int sizeM = mensaje.size();
+
+    for(int i=sizeM-1; i>0; i-=2){
+        //Si la x está al final, se elimina
+        if(i == sizeM - 1 && mensaje[i] == 'x'){
+            mensaje.erase(i, 1);
+        }
+        //Si la x esta entre dos letras iguales, se elimina
+        if(mensaje[i] == 'x' && mensaje[i-1] == mensaje[i+1]){
+            mensaje.erase(i, 1);
+            sizeM--;
+        }
+    }
+}
+
 // Funcion para devolver la fila, columna de la letra que estemos buscando
 pair<int, int> buscarLetra(char letra){
     for(int i=0; i<5; i++){
@@ -253,6 +269,7 @@ int main() {
                 break;
             case 2:
                 mensaje = descencriptado(mensaje, llave);
+                elimiarX(mensaje);
                 cout << "Su mensaje se descencriptó con éxito, es: " << endl;
                 cout << mensaje << endl << endl;
                 break;
