@@ -144,23 +144,56 @@ string encriptado(string mensaje, string llave){
     return mensaje;
 }
 
-/*
 string descencriptado(string mensaje, string llave){
-    int i, x, y, j=0;
-    int longitudLlave = strlen(llave);
-    for (i=0; i<strlen(mensaje); i++){
-        if(!isalpha(mensaje[i]))
-            continue;
-        x = (islower(mensaje[i])) ? 97 : 65;
-        y = tolower(llave[j]) - 97;
-        
-        mensaje[i] = x + (((mensaje[i] - x - y) + 26)) % 26;
-        j++;
-        if(j == longitudLlave)
-            j = 0;
+    int sizeM = mensaje.size();
+    char letra1, letra2;
+    pair<int,int> pos1, pos2;
+
+    // Recorremos cada par
+    for(int i=0; i<sizeM; i+=2){
+        letra1 = mensaje[i];
+        letra2 = mensaje[i+1];
+
+        // Aqui ya tenemos los pares de [fila, columna]
+        pos1 = buscarLetra(letra1);
+        pos2 = buscarLetra(letra2);
+
+        // Si estan en la misma fila, caemos en el caso 1
+        if(pos1.first == pos2.first){
+            // Nos movemos a partir de la columna, tiene que ser % 5
+            // para que sea circular y no nos salgamos de rango.
+            // Usamos +4 en lugar de -1 para evitar numeros negativos
+            letra1 = matriz[pos1.first][ (pos1.second + 4) % 5 ];
+            letra2 = matriz[pos2.first][ (pos2.second + 4) % 5 ];
+        }
+
+        // Si estan en la misma columna, caemos en el caso 2
+        // Usamos +4 en lugar de -1 para evitar numeros negativos
+        else if(pos1.second == pos2.second){
+            letra1 = matriz[ (pos1.first + 4) % 5 ][pos1.second];
+            letra2 = matriz[ (pos2.first + 4) % 5 ][pos2.second];
+        }
+
+        // Diferente fila y columna, caemos en el caso 3 (rectangulo)
+        else{
+            // Misma columna, fila de la otra letra
+
+            // letra1 queda en su misma columna
+            // pero se intercambia con la letra de
+            // la fila que tiene la letra 2
+            letra1 = matriz[pos2.first][pos1.second];
+
+            // letra2 queda en su misma columna
+            // pero se intercambia con la letra de
+            // la fila que tiene la letra 1
+            letra2 = matriz[pos1.first][pos2.second];
+        }
+        mensaje[i] = letra1;
+        mensaje[i+1] = letra2;
     }
+
     return mensaje;
-}*/
+}
 
 int main() {
     string mensaje, llave;
@@ -171,6 +204,8 @@ int main() {
     for(int i = 0; i < mensaje.length(); i++) {
         mensaje[i] = tolower(mensaje[i]);
     }
+
+    cout << endl;
     
 
     cout << "Ingresa tu llave: " << endl;
@@ -179,14 +214,26 @@ int main() {
         llave[i] = tolower(llave[i]);
     }
 
+    cout << endl;
+
     // Se limpian la llave y el mensaje
 
     mensaje = limpiarMensaje(mensaje);
     prepararPares(mensaje);
-    cout << "Mensaje: " << mensaje << endl;
+    cout << "Mensaje: " << mensaje << endl << endl;
 
     llave = limpiarMensaje(llave);
-    cout << "llave: " << llave << endl; 
+    cout << "llave: " << llave << endl << endl;
+
+    cout << "Matriz llave: " << endl;
+    generadorMatriz(llave);
+    for (int i = 0; i < 5; ++i) {
+        for (int j = 0; j < 5; ++j) {
+            cout << matriz[i][j] << ' ';
+        }
+        cout << endl;;
+    }
+    cout << endl;
 
     do {
         cout << "Ingrese la opción que desee ejecutar:" << endl;
@@ -196,23 +243,18 @@ int main() {
         cin >> opcion;
         cin.ignore();
 
+        cout << endl;
+        
         switch (opcion) {
             case 1:
-                generadorMatriz(llave);
-                for (int i = 0; i < 5; ++i) {
-                    for (int j = 0; j < 5; ++j) {
-                        cout << matriz[i][j] << ' ';
-                    }
-                    cout << endl;
-                }
                 mensaje = encriptado(mensaje, llave);
                 cout << "Su mensaje se encriptó con éxito, es: " << endl;
-                cout << mensaje << endl;
+                cout << mensaje << endl << endl;
                 break;
             case 2:
-                //mensaje = descencriptado(mensaje, llave);
+                mensaje = descencriptado(mensaje, llave);
                 cout << "Su mensaje se descencriptó con éxito, es: " << endl;
-                cout << mensaje << endl;
+                cout << mensaje << endl << endl;
                 break;
             case 3:
                 cout << "Saliendo..." << endl;
@@ -224,4 +266,5 @@ int main() {
     } while (opcion != 3);
 
     return 0;
+
 }
