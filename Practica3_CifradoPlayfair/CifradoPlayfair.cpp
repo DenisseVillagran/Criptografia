@@ -95,7 +95,51 @@ pair<int, int> buscarLetra(char letra){
     return {-1,-1}; // la letra no fue encontrada, error
 }
 
-string encriptado(string& mensaje, string llave){
+string encriptado(string mensaje, string llave){
+    int sizeM = mensaje.size();
+    char letra1, letra2;
+    pair<int,int> pos1, pos2;
+
+    // Recorremos cada par
+    for(int i=0; i<sizeM; i+=2){
+        letra1 = mensaje[i];
+        letra2 = mensaje[i+1];
+
+        // Aqui ya tenemos los pares de [fila, columna]
+        pos1 = buscarLetra(letra1);
+        pos2 = buscarLetra(letra2);
+
+        // Si estan en la misma fila, caemos en el caso 1
+        if(pos1.first == pos2.first){
+            // Nos movemos a partir de la columna, tiene que ser % 5
+            // para que sea circular y no nos salgamos de rango.
+            letra1 = matriz[pos1.first][ (pos1.second + 1) % 5 ];
+            letra2 = matriz[pos2.first][ (pos2.second + 1) % 5 ];
+        }
+
+        // Si estan en la misma columna, caemos en el caso 2
+        else if(pos1.second == pos2.second){
+            letra1 = matriz[ (pos1.first + 1) % 5 ][pos1.second];
+            letra2 = matriz[ (pos2.first + 1) % 5 ][pos2.second];
+        }
+
+        // Diferente fila y columna, caemos en el caso 3 (rectangulo)
+        else{
+            // Misma columna, fila de la otra letra
+
+            // letra1 queda en su misma columna
+            // pero se intercambia con la letra de
+            // la fila que tiene la letra 2
+            letra1 = matriz[pos2.first][pos1.second];
+
+            // letra2 queda en su misma columna
+            // pero se intercambia con la letra de
+            // la fila que tiene la letra 1
+            letra2 = matriz[pos1.first][pos2.second];
+        }
+        mensaje[i] = letra1;
+        mensaje[i+1] = letra2;
+    }
 
     return mensaje;
 }
@@ -161,7 +205,7 @@ int main() {
                     }
                     cout << endl;
                 }
-                //mensaje = encriptado(mensaje, llave);
+                mensaje = encriptado(mensaje, llave);
                 cout << "Su mensaje se encriptó con éxito, es: " << endl;
                 cout << mensaje << endl;
                 break;
