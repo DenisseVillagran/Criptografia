@@ -113,7 +113,7 @@ The Kasiski method (F. Kasiski, 1863) is a classical technique to attack the Vig
 The Vigenère cipher was implemented in C using dynamic arrays with `malloc` to store both the message and the key, allowing variable-length strings without depending on static arrays. The program converts the key to lowercase (`tolower`) and computes the shift for each character based on the key letter.  
 
 - In the `encriptado` function, the message is iterated character by character, checked if it’s a letter (`isalpha`), and the ASCII base (`'A'` or `'a'`) is computed to apply the appropriate shift: `(mensaje[i] - base + shift) % 26`.
-- In the `descencriptado` function, the inverse process is performed: `(mensaje[i] - base - shift + 26) % 26` to recover the original text.
+- In the `descencriptado` function, the inverse process is performed: `(mensaje[i] - base - desplazamiento + 26) % 26` to recover the original text.
 
 The `main` function asks the user for the message and the key, and presents a menu with three options: encrypt, decrypt, and exit. Depending on the option selected, it calls the corresponding function and displays the result. At the end, the allocated memory is freed to avoid leaks.
 
