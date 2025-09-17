@@ -25,6 +25,7 @@ Cada práctica o investigación se encuentra en su propia carpeta con su respect
 | 01 | [Práctica 01 – Cifrado César](./Practica1_CifradoCesar) |
 | 02 | [Práctica 02 - Cifrado Vigenere/Kasiski](./Practica2_Vigenere) |
 | 03 | [Práctica 03 - Cifrado Playfair](./Practica3_CifradoPlayfair) |
+| 04 | [Práctica 04 - Cifrado Vernam](./Practica4_Vernam) |
 
 ---
 
@@ -55,3 +56,4 @@ Each practice or research project is located in its own folder with its respecti
 | 01 | [Practice 01 – Caesar Cipher](./Practica1_CifradoCesar) |
 | 02 | [Practice 02 - Vigenere/Kasiski Cipher](./Practica2_Vigenere) |
 | 03 | [Practice 03 - Playfair Cipher](./Practica3_CifradoPlayfair) |
+| 04 | [Practuce 04 - Vernam Cipher](./Practica4_Vernam) |
