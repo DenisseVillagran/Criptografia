@@ -1,4 +1,4 @@
-# Práctica 06: Extended Euclidean Algorithm  
+# Práctica 07: Extended Euclidean Algorithm  
 
 **Integrantes:**  
 - Bueno Hernández Héctor Daniel  
