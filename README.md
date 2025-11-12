@@ -26,6 +26,10 @@ Cada práctica o investigación se encuentra en su propia carpeta con su respect
 | 02 | [Práctica 02 - Cifrado Vigenere/Kasiski](./Practica2_Vigenere) |
 | 03 | [Práctica 03 - Cifrado Playfair](./Practica3_CifradoPlayfair) |
 | 04 | [Práctica 04 - Cifrado Vernam](./Practica4_Vernam) |
+| 05 | [Práctica 05 - Investigación Enigma](./Practica5_InvestigaciónEnigma) |
+| 06 | [Práctica 06 - Cifrado Hill](./Practica6_CifradoHill) |
+| 07 | [Práctica 07 - Algoritmo de Euclides Extendido](./Practica7_EuclidesExtendido) |
+| 08 | [PROYECTO](./PROYECTO) |
 
 ---
 
@@ -57,3 +61,8 @@ Each practice or research project is located in its own folder with its respecti
 | 02 | [Practice 02 - Vigenere/Kasiski Cipher](./Practica2_Vigenere) |
 | 03 | [Practice 03 - Playfair Cipher](./Practica3_CifradoPlayfair) |
 | 04 | [Practuce 04 - Vernam Cipher](./Practica4_Vernam) |
+| 05 | [Práctica 05 - Enigma Code Research](./Practica5_InvestigaciónEnigma) |
+| 06 | [Práctica 06 - Hill Cipher](./Practica6_CifradoHill) |
+| 07 | [Práctica 07 - Extended Euclidean Algorithm](./Practica7_EuclidesExtendido) |
+| 08 | [PROYECTO](./PROYECTO) |
+
