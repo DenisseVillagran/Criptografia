@@ -1,0 +1,67 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block after_related_objects %}
+    
+    {% if results_data %}
+    <div style="margin: 20px 0; padding: 20px; background: #fff; border: 1px solid #ccc; border-radius: 4px;">
+        <h2 style="margin-bottom: 20px; color: #417690;">📊 Resultados en Tiempo Real</h2>
+        
+        <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+            {% for result in results_data %}
+                <div style="flex: 1 1 45%; min-width: 300px; border: 1px solid #eee; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h3 style="font-size: 16px; margin-bottom: 10px;">{{ forloop.counter }}. {{ result.question.pregunta_texto }}</h3>
+                    
+                    {% if result.type == 'CHOICE' %}
+                        <div style="height: 250px; position: relative;">
+                            <canvas id="adminChart_{{ result.question.pk }}"></canvas>
+                        </div>
+                        <p style="text-align: center; color: #666; margin-top: 10px;">Total votos: {{ result.total_votes }}</p>
+                    
+                    {% elif result.type == 'TEXT' %}
+                        <ul style="padding-left: 20px; color: #555;">
+                            {% for text in result.text_responses %}
+                                <li style="margin-bottom: 5px;">"{{ text }}"</li>
+                            {% empty %}
+                                <li>No hay respuestas aún.</li>
+                            {% endfor %}
+                        </ul>
+                        {% if result.total_count > 5 %}
+                            <p style="font-style: italic; color: #999;">... y {{ result.total_count|add:"-5" }} respuestas más.</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          {% for result in results_data %}
+            {% if result.type == 'CHOICE' %}
+              new Chart(document.getElementById('adminChart_{{ result.question.pk }}'), {
+                type: 'doughnut',
+                data: {
+                  labels: {{ result.labels|safe }},
+                  datasets: [{
+                    data: {{ result.data|safe }},
+                    backgroundColor: [
+                      '#417690', '#f5dd5d', '#79aec8', '#c4dce8', '#264b5d' // Colores estilo Django Admin
+                    ],
+                    borderWidth: 1
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: { legend: { position: 'right' } }
+                }
+              });
+            {% endif %}
+          {% endfor %}
+      });
+    </script>
+    {% endif %}
+
+{% endblock %}

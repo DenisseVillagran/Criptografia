@@ -1,0 +1,42 @@
+{% extends "votacionC/base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card shadow-sm border-danger">
+      
+      <div class="card-header bg-danger text-white">
+        <h3 class="mb-0">Confirmar Eliminación</h3>
+      </div>
+      
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          
+          <h5 class="card-title">¿Estás seguro de que quieres eliminar el formulario?</h5>
+          
+          <div class="alert alert-warning">
+            <h4 class="mb-0">"{{ formulario.titulo }}"</h4>
+          </div>
+          
+          <p class="text-danger">
+            <strong>¡Atención!</strong> Esta acción no se puede deshacer. Se borrarán todas sus preguntas y todas las respuestas enviadas.
+          </p>
+          
+          <hr>
+          
+          <div class="d-flex justify-content-between">
+            <a href="{% url 'votacion:formulario_list' %}" class="btn btn-secondary">
+              Cancelar
+            </a>
+            <button type="submit" class="btn btn-danger">
+              Sí, eliminar permanentemente
+            </button>
+          </div>
+          
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

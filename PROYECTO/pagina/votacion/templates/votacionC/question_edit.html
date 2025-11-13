@@ -1,0 +1,74 @@
+{% extends "votacionC/base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    
+    <a href="{% url 'votacion:formulario_edit' question.formulario.pk %}" class="btn btn-link text-decoration-none ps-0">
+      &larr; Regresar al editor del formulario
+    </a>
+    <h3 class="mt-2">Editando Opciones para:</h3>
+    <h4 class="text-muted mb-3">"{{ question.pregunta_texto }}"</h4>
+
+    <div class="card shadow-sm">
+      <div class="card-header">
+        <h5 class="mb-0">Administrar Opciones</h5>
+      </div>
+      
+      <form method="post" novalidate>
+        {% csrf_token %}
+        
+        {{ formset.management_form }}
+        
+        <div class="card-body">
+          {% if formset.non_form_errors %}
+             <div class="alert alert-danger">{{ formset.non_form_errors|first }}</div>
+          {% endif %}
+
+          <div class="row g-3">
+            {% for form in formset %}
+              {{ form.id }} 
+              
+              <div class="col-md-8">
+                <label for="{{ form.choice_text.id_for_label }}" class="form-label">
+                  Opción {{ forloop.counter }}
+                </label>
+                <input type="text"
+                       name="{{ form.choice_text.html_name }}"
+                       id="{{ form.choice_text.id_for_label }}"
+                       value="{{ form.choice_text.value|default:'' }}"
+                       class="form-control {% if form.choice_text.errors %}is-invalid{% endif %}">
+                {% if form.choice_text.errors %}
+                  <div class="invalid-feedback d-block">{{ form.choice_text.errors|first }}</div>
+                {% endif %}
+              </div>
+              
+              <div class="col-md-2">
+                <label for="{{ form.orden.id_for_label }}" class="form-label">Orden</label>
+                <input type="number"
+                       name="{{ form.orden.html_name }}"
+                       id="{{ form.orden.id_for_label }}"
+                       value="{{ form.orden.value|default:0 }}"
+                       class="form-control {% if form.orden.errors %}is-invalid{% endif %}">
+              </div>
+
+              {% if form.instance.pk %} <div class="col-md-2 d-flex align-items-end">
+                <div class="form-check">
+                  {{ form.DELETE }}
+                  <label for="{{ form.DELETE.id_for_label }}" class="form-check-label text-danger">Borrar</label>
+                </div>
+              </div>
+              {% endif %}
+              
+            {% endfor %}
+          </div>
+        </div>
+        
+        <div class="card-footer text-end">
+          <button type="submit" class="btn btn-primary">Guardar Opciones</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

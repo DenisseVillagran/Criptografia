@@ -1,0 +1,59 @@
+{% extends "votacionC/base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="mb-0">Mis Formularios</h2>
+  <a href="{% url 'votacion:formulario_create' %}" class="btn btn-primary">
+    &#43; Crear Nuevo Formulario
+  </a>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-header">
+    <h4 class="mb-0">Lista de Formularios Creados</h4>
+  </div>
+
+  {% if formulario_list %}
+    <div class="list-group list-group-flush">
+      {% for formulario in formulario_list %}
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            
+            <div class="col-md-5">
+              <h5 class="mb-1">{{ formulario.titulo }}</h5>
+              <small class="text-muted">
+                {% if formulario.is_closed %}
+                  <span class="badge bg-secondary">Cerrado</span>
+                {% else %}
+                  <span class="badge bg-success">Activo</span>
+                {% endif %}
+              </small>
+            </div>
+
+            <div class="col-md-7 text-md-end mt-2 mt-md-0">
+              <a href="{% url 'votacion:formulario_results' formulario.pk %}" class="btn btn-info btn-sm me-2">
+                Resultados ({{ formulario.envios.count }})
+              </a>
+              <a href="{% url 'votacion:formulario_edit' formulario.pk %}" class="btn btn-outline-secondary btn-sm me-2">
+                Editar
+              </a>
+              <a href="{% url 'votacion:formulario_delete' formulario.pk %}" class="btn btn-outline-danger btn-sm">
+                Borrar
+              </a>
+            </div>
+            
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div classs="card-body text-center">
+      <p class="text-muted mb-0">No has creado ningún formulario todavía.</p>
+      <a href="{% url 'votacion:formulario_create' %}" class="btn btn-success mt-2">
+        ¡Crea tu primer formulario!
+      </a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

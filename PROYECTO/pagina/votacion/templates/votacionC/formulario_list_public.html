@@ -1,0 +1,47 @@
+{% extends "votacionC/base.html" %}
+
+{% block content %}
+<h2 class="mb-3">Formularios Públicos Disponibles</h2>
+
+<div class="card shadow-sm">
+  <div class="card-header">
+    <h4 class="mb-0">Formularios para Responder</h4>
+  </div>
+
+  {% if formulario_list %}
+    <div class="list-group list-group-flush">
+      {% for formulario in formulario_list %}
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            
+            <div class="col-md-8">
+              <h5 class="mb-1">{{ formulario.titulo }}</h5>
+              <small class="text-muted">
+                Creado por: {{ formulario.propietario.username }}
+                {% if formulario.is_closed %}
+                  <span class="badge bg-secondary">Cerrado</span>
+                {% else %}
+                  <span class="badge bg-success">Activo</span>
+                {% endif %}
+              </small>
+            </div>
+
+            <div class="col-md-4 text-md-end mt-2 mt-md-0">
+              {% if not formulario.is_closed %}
+                <a href="{% url 'votacion:formulario_respond' formulario.pk %}" class="btn btn-primary">
+                  Responder
+                </a>
+              {% endif %}
+            </div>
+            
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="card-body text-center">
+      <p class="text-muted mb-0">No hay formularios de otros usuarios disponibles para responder.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

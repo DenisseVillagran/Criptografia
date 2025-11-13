@@ -1,0 +1,78 @@
+{% extends "votacionC/base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <a href="{% url 'votacion:formulario_list' %}" class="btn btn-link text-decoration-none ps-0">
+      &larr; Regresar a mis formularios
+    </a>
+    <h2>Editor: <span class="text-muted">{{ formulario.titulo }}</span></h2>
+    <p>{{ formulario.descripcion|default:"Este formulario no tiene descripción." }}</p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-7">
+    <div class="card shadow-sm">
+      <div class="card-header">
+        <h4 class="mb-0">Preguntas del Formulario</h4>
+      </div>
+      
+      {% if questions %}
+        <ul class="list-group list-group-flush">
+          {% for question in questions %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <span class="text-muted small">#{{ forloop.counter }}</span>
+                <strong>{{ question.pregunta_texto }}</strong>
+                <span class="badge 
+                  {% if question.tipo_pregunta == 'CHOICE' %}bg-primary{% else %}bg-info{% endif %}">
+                  {{ question.get_tipo_pregunta_display }}
+                </span>
+              </div>
+              <div>
+                {% if question.tipo_pregunta == 'CHOICE' %}
+                  <a href="{% url 'votacion:question_edit_options' question.pk %}" class="btn btn-outline-secondary btn-sm">
+                    Editar Opciones
+                  </a>
+                {% endif %}
+                <a href="#" class="btn btn-outline-danger btn-sm disabled">Borrar</a>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="card-body text-center text-muted">
+          <p class="mb-0">Aún no has añadido ninguna pregunta.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-md-5">
+    <div class="card shadow-sm">
+      <div class="card-header">
+        <h4 class="mb-0">Añadir Nueva Pregunta</h4>
+      </div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="{{ form.pregunta_texto.id_for_label }}" class="form-label">{{ form.pregunta_texto.label }}</label>
+            {{ form.pregunta_texto }}
+          </div>
+          <div class="mb-3">
+            <label for="{{ form.tipo_pregunta.id_for_label }}" class="form-label">{{ form.tipo_pregunta.label }}</label>
+            {{ form.tipo_pregunta }}
+          </div>
+          <div class="d-grid">
+            <button type="submit" class="btn btn-success">Añadir Pregunta</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
