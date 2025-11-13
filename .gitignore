@@ -1,1 +1,9 @@
 Practica3_CifradoPlayfair/CifradoPlayfair.exe
+venv/
+*/venv/
+polling/
+*.pyc
+*.pyo
+*.pyd
+env/
+*.sqlite3
