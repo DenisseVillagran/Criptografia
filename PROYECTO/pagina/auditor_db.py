@@ -2,7 +2,6 @@ import sqlite3
 
 # Prueba para ver si se cifraron los datos
 # Nos conectan directamente al archivo de base de datos
-# (Simulando que alguien lo robó)
 conn = sqlite3.connect('db.sqlite3')
 cursor = conn.cursor()
 
