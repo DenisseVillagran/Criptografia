@@ -17,6 +17,12 @@ from django.forms import inlineformset_factory
 from .models import Formulario, Question, Choice, EnvioFormulario, Respuesta
 from .forms import FormularioForm, QuestionForm
 
+import os
+from django.conf import settings
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+
+
 # --- 1. VISTA DE ÍNDICE PÚBLICA (MODIFICADA) ---
 class FormularioListView(LoginRequiredMixin, generic.ListView):
     """Muestra los formularios de OTROS usuarios para responder."""
@@ -109,53 +115,141 @@ def question_edit_options_view(request, pk):
 def formulario_respond_view(request, pk):
     formulario = get_object_or_404(Formulario, pk=pk)
     questions = formulario.preguntas.all()
+
     if formulario.is_closed():
         messages.warning(request, 'Este formulario ya está cerrado.')
         return redirect('votacion:formulario_list')
+    
     if EnvioFormulario.objects.filter(formulario=formulario, usuario=request.user).exists():
         messages.info(request, 'Ya has enviado una respuesta para este formulario.')
-        # Redirigimos a la lista pública (o podríamos hacer una vista de resultados pública)
         return redirect('votacion:formulario_list') 
+
     if request.method == 'POST':
         try:
-            with transaction.atomic():
-                envio = EnvioFormulario.objects.create(formulario=formulario, usuario=request.user)
-                for question in questions:
-                    input_name = f'pregunta_{question.pk}'
-                    data = request.POST.get(input_name)
-                    if data is None: continue
-                    respuesta = Respuesta.objects.create(envio=envio, pregunta=question)
-                    if question.tipo_pregunta == Question.QuestionType.MULTIPLE_CHOICE:
-                        respuesta.opcion_seleccionada_id = int(data)
-                    else:
-                        respuesta.respuesta_texto = data
-                    respuesta.save()
-            messages.success(request, '¡Tu respuesta ha sido guardada! Gracias.')
-            return redirect('votacion:formulario_list') # Redirigir a la lista pública
+            # 1. Se recopilan todas las respuestas en un diccionario
+            # { 'id_pregunta': 'valor_respuesta', ... }
+            respuestas_dict = {}
+            
+            for question in questions:
+                input_name = f'pregunta_{question.pk}'
+                data = request.POST.get(input_name)
+                
+                if data:
+                    # Guardamos la respuesta usando la pk de la pregunta como clave
+                    respuestas_dict[str(question.pk)] = data
+
+            # 2. Cargamos la llave pública
+            key_path = os.path.join(settings.BASE_DIR, 'public.pem')
+            if not os.path.exists(key_path):
+                raise FileNotFoundError("No se encontró la llave pública (public.pem) en el servidor")
+
+            public_key = RSA.import_key(open(key_path).read())
+            cipher_rsa = PKCS1_OAEP.new(public_key)
+
+            # 3. Pasamos los datos a formato JSON y luego a bytes
+            json_data = json.dumps(respuestas_dict)
+            bytes_data = json_data.encode('utf-8')
+
+            # 4. Se encriptan los dato
+            datos_encriptados = cipher_rsa.encrypt(bytes_data)
+
+            # 5. Se envian los votos encriptados
+            # Ya NO creamos objetos 'Respuesta'. Se guardan en un blob cifrado.
+            EnvioFormulario.objects.create(
+                formulario=formulario, 
+                usuario=request.user,
+                datos_cifrados=datos_encriptados 
+            )
+
+            messages.success(request, 'Tu respuesta ha sido encriptada y guardada con seguridad!')
+            return redirect('votacion:formulario_list')
+
         except Exception as e:
-            messages.error(request, f'Hubo un error al guardar tu respuesta: {e}')
+            print(f"Error de encriptación: {e}")
+            messages.error(request, f'Hubo un error al procesar tu voto seguro: {e}')
+
     context = {'formulario': formulario, 'questions': questions}
     return render(request, 'votacionC/formulario_respond.html', context)
 
-# --- 7. VISTA DE RESULTADOS (PARA EL PROPIETARIO) ---
+
+
+# --- 7. VISTA DE RESULTADOS ---
+# Aquí se desencriptan los datos
 @login_required(login_url='/accounts/login/')
 def formulario_results_view(request, pk):
+    # Verificamos que sea el propietario (Solo el dueño tiene acceso a la llave privada)
     formulario = get_object_or_404(Formulario, pk=pk, propietario=request.user)
     questions = formulario.preguntas.all()
+    
+    # Buscamos la llave privada usada para desencriptar
+    key_path = os.path.join(settings.BASE_DIR, 'private.pem')
+    if not os.path.exists(key_path):
+        messages.error(request, "Error de Configuración: No se encontró la llave privada del servidor.")
+        return redirect('votacion:my_formulario_list')
+
+    try:
+        private_key = RSA.import_key(open(key_path).read())
+        cipher_rsa = PKCS1_OAEP.new(private_key)
+    except Exception as e:
+        messages.error(request, f"Error cargando llave privada: {e}")
+        return redirect('votacion:my_formulario_list')
+
+    # Obtenemos todos los envíos cifrados del formulario
+    envios = EnvioFormulario.objects.filter(formulario=formulario)
+    
+    # Momento de descifrar todos los votos en memoria
+    # Lista de diccionarios: [{'5': 'Opción A', '6': 'Texto...'}, ...]
+    votos_descifrados = []
+    
+    for envio in envios:
+        if envio.datos_cifrados:
+            try:
+                bytes_descifrados = cipher_rsa.decrypt(envio.datos_cifrados)
+                json_data = json.loads(bytes_descifrados.decode('utf-8'))
+                votos_descifrados.append(json_data)
+            except Exception as e:
+                print(f"Error descifrando voto {envio.id}: {e}")
+
+    # Ahora si se muestran
     results_data = []
+
     for question in questions:
+        q_id = str(question.pk)
+        
         if question.tipo_pregunta == Question.QuestionType.MULTIPLE_CHOICE:
-            respuestas = Respuesta.objects.filter(pregunta=question)
-            conteo_votos = Counter(respuestas.values_list('opcion_seleccionada_id', flat=True))
+            # Extraer solo las respuestas para ESTA pregunta de todos los votos descifrados
+            # Si el voto tiene respuesta para esta pregunta, la tomamos
+            respuestas = [voto[q_id] for voto in votos_descifrados if q_id in voto]
+            
+            try:
+                respuestas_ids = [int(r) for r in respuestas]
+            except ValueError:
+                respuestas_ids = []
+
+            conteo_votos = Counter(respuestas_ids)
+            
             labels = []
             data = []
             for choice in question.opciones.all():
                 labels.append(choice.choice_text)
                 data.append(conteo_votos.get(choice.pk, 0))
-            results_data.append({'question': question, 'type': 'CHOICE', 'labels': json.dumps(labels), 'data': json.dumps(data), 'total_votes': respuestas.count()})
+            
+            results_data.append({
+                'question': question, 
+                'type': 'CHOICE', 
+                'labels': json.dumps(labels), 
+                'data': json.dumps(data), 
+                'total_votes': len(respuestas_ids)
+            })
+            
         elif question.tipo_pregunta == Question.QuestionType.OPEN_TEXT:
-            respuestas = Respuesta.objects.filter(pregunta=question).values_list('respuesta_texto', flat=True)
-            results_data.append({'question': question, 'type': 'TEXT', 'text_responses': list(respuestas)})
+            respuestas_texto = [voto[q_id] for voto in votos_descifrados if q_id in voto]
+            results_data.append({
+                'question': question, 
+                'type': 'TEXT', 
+                'text_responses': respuestas_texto
+            })
+
     context = {'formulario': formulario, 'results_data': results_data}
     return render(request, 'votacionC/formulario_results.html', context)
 

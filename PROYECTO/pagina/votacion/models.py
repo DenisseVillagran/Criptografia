@@ -75,12 +75,18 @@ class EnvioFormulario(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='envios')
     fecha_envio = models.DateTimeField(default=timezone.now)
 
+    # --- Cifrado RSA ---
+    # Guardamos todas las respuestas del usuario comprimidas en un JSON
+    # y luego encriptadas. Al ser RSA, el resultado son BYTES, no texto
+    datos_cifrados = models.BinaryField(null=True, blank=True)
+
     class Meta:
         # Un usuario solo puede enviar un formulario una vez
         unique_together = ('formulario', 'usuario')
 
     def __str__(self):
-        return f"Envío de {self.usuario.username} para {self.formulario.titulo}"
+        return f"Envío cifrado de {self.usuario.username} para {self.formulario.titulo}"
+
 
 # --- 5. La Respuesta (Qué respondió) ---
 # Este es el núcleo. Almacena la respuesta a UNA pregunta.
