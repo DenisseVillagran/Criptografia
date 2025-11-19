@@ -18,14 +18,14 @@ PARA LA PARTE DE CIFRADO
 > python manage.py makemigrations
 > python manage.py migrate
 
-2. Ejecutar el script generar_llaves.py
-
-3. Se creó una encuesta llamada 'Prueba2'.
+2. Se creó una encuesta llamada 'Prueba2'.
    Para rapido, crear un nuevo usuario y votar en esa encuesta
 
-4. Entrar como admin y comprobar que se siguen actualizando correctamente los votos
+3. Entrar como admin y comprobar que se siguen actualizando correctamente los votos
 
 (Opcional)
-5. Para verificar el cifrado, ejecutar el archivo auditor_db.py
+4. Para verificar el cifrado, ejecutar el archivo auditor_db.py
    Este archivo trata de obtener los archivos haciendo una consulta
    Cada que se haga un nuevo voto, se debe ver el contenido del voto cifrado
+
+El archivo generar_llaves se ejecuta una sola vez al inicio, ya no es necesario ejectuarlo

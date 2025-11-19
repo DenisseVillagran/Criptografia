@@ -7,4 +7,3 @@ polling/
 *.pyd
 env/
 *.sqlite3
-private.pem
