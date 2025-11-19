@@ -139,7 +139,7 @@ def formulario_respond_view(request, pk):
                     respuestas_dict[str(question.pk)] = data
 
             # 2. Cargamos la llave pública
-            key_path = os.path.join(settings.BASE_DIR, 'public.pem')
+            key_path = os.path.join(settings.BASE_DIR, 'keys', 'public.pem')
             if not os.path.exists(key_path):
                 raise FileNotFoundError("No se encontró la llave pública (public.pem) en el servidor")
 
@@ -182,7 +182,7 @@ def formulario_results_view(request, pk):
     questions = formulario.preguntas.all()
     
     # Buscamos la llave privada usada para desencriptar
-    key_path = os.path.join(settings.BASE_DIR, 'private.pem')
+    key_path = os.path.join(settings.BASE_DIR, 'keys', 'private.pem')
     if not os.path.exists(key_path):
         messages.error(request, "Error de Configuración: No se encontró la llave privada del servidor.")
         return redirect('votacion:my_formulario_list')

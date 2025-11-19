@@ -1,11 +1,19 @@
 import sqlite3
+import os
 
-# Prueba para ver si se cifraron los datos
-# Nos conectan directamente al archivo de base de datos
-conn = sqlite3.connect('db.sqlite3')
-cursor = conn.cursor()
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, 'db.sqlite3')
 
 print("--- AUDITOR_DB ---")
+print(f"Conectando a la base de datos en: {DB_PATH}")
+
+if not os.path.exists(DB_PATH):
+    print("Error, No se encuentra el archivo db.sqlite3 en esa ruta")
+    exit()
+
+conn = sqlite3.connect(DB_PATH)
+cursor = conn.cursor()
+
 print("Intentando leer la tabla 'votacion_envioformulario'...\n")
 
 try:
@@ -14,7 +22,7 @@ try:
     rows = cursor.fetchall()
 
     if not rows:
-        print("La tabla está vacía...")
+        print("La tabla esta vacía...")
     
     for row in rows:
         voto_id = row[0]
@@ -25,7 +33,8 @@ try:
         print(f"TIPO DE DATO: {type(data_raw)}")
         print("-" * 30)
 
-except sqlite3.OperationalError:
-    print("Error: No se encuentra la tabla.")
+except sqlite3.OperationalError as e:
+    print("Error")
+
 finally:
     conn.close()
