@@ -29,7 +29,7 @@ Cada práctica o investigación se encuentra en su propia carpeta con su respect
 | 05 | [Práctica 05 - Investigación Enigma](./Practica5_InvestigaciónEnigma) |
 | 06 | [Práctica 06 - Cifrado Hill](./Practica6_CifradoHill) |
 | 07 | [Práctica 07 - Algoritmo de Euclides Extendido](./Practica7_EuclidesExtendido) |
-| 08 | [PROYECTO](./PROYECTO) |
+| 08 | [Proyecto Final](./PROYECTO) |
 
 ---
 
@@ -64,5 +64,5 @@ Each practice or research project is located in its own folder with its respecti
 | 05 | [Práctica 05 - Enigma Code Research](./Practica5_InvestigaciónEnigma) |
 | 06 | [Práctica 06 - Hill Cipher](./Practica6_CifradoHill) |
 | 07 | [Práctica 07 - Extended Euclidean Algorithm](./Practica7_EuclidesExtendido) |
-| 08 | [PROYECTO](./PROYECTO) |
+| 08 | [Final Project](./PROYECTO) |
 
