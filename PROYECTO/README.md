@@ -78,8 +78,6 @@ https://127.0.0.1:8000
 
 ---
 
-# English Version
-
 # Manual to run the page
 
 
@@ -99,6 +97,7 @@ https://127.0.0.1:8000
 ```bash
 git clone <URL_OF_REPOSITORY>
 cd <REPOSITORY_NAME>
+cd PROYECTO
 ```
 
 ---
