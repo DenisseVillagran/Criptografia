@@ -23,7 +23,7 @@ from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 
 
-# --- 1. VISTA DE ÍNDICE PÚBLICA (MODIFICADA) ---
+# Vista para listar formularios disponibles
 class FormularioListView(LoginRequiredMixin, generic.ListView):
     """Muestra los formularios de OTROS usuarios para responder."""
     login_url = '/accounts/login/'
@@ -42,7 +42,7 @@ class FormularioListView(LoginRequiredMixin, generic.ListView):
             envios__usuario=self.request.user
         ).order_by('-pub_date')
 
-# --- 2. ¡NUEVA VISTA! EL DASHBOARD DEL USUARIO ---
+# Vista para listar mis formularios
 class MyFormularioListView(LoginRequiredMixin, generic.ListView):
     """Muestra los formularios QUE YO HE CREADO."""
     login_url = '/accounts/login/'
@@ -55,7 +55,7 @@ class MyFormularioListView(LoginRequiredMixin, generic.ListView):
             propietario=self.request.user
         ).order_by('-pub_date')
 
-# --- 3. VISTA DE CREACIÓN DE FORMULARIO ---
+# Vista para crear un nuevo formulario
 @login_required(login_url='/accounts/login/')
 def formulario_create_view(request):
     if request.method == 'POST':
@@ -71,10 +71,10 @@ def formulario_create_view(request):
         form = FormularioForm()
     return render(request, 'votacionC/formulario_create.html', {'form': form})
 
-# --- 4. VISTA DE EDITOR DE FORMULARIO ---
+# Vista para editar un formulario (añadir preguntas)
 @login_required(login_url='/accounts/login/')
 def formulario_edit_view(request, pk):
-    # (El chequeo de propietario ya está aquí, está seguro)
+    # Verificamos que el usuario sea el propietario
     formulario = get_object_or_404(Formulario, pk=pk, propietario=request.user)
     if request.method == 'POST':
         form = QuestionForm(request.POST)
@@ -90,10 +90,10 @@ def formulario_edit_view(request, pk):
     context = {'formulario': formulario, 'questions': questions, 'form': form}
     return render(request, 'votacionC/formulario_edit.html', context)
 
-# --- 5. VISTA DE EDITOR DE OPCIONES ---
+# Vista para editar las opciones de una pregunta con opción mul
 @login_required(login_url='/accounts/login/')
 def question_edit_options_view(request, pk):
-    # (El chequeo de propietario ya está aquí, está seguro)
+    # Verificación del propietario
     question = get_object_or_404(Question, pk=pk, formulario__propietario=request.user)
     if question.tipo_pregunta != Question.QuestionType.MULTIPLE_CHOICE:
         messages.error(request, 'Esta pregunta no es de Opción Múltiple.')
@@ -110,7 +110,7 @@ def question_edit_options_view(request, pk):
     context = {'question': question, 'formset': formset}
     return render(request, 'votacionC/question_edit.html', context)
 
-# --- 6. VISTA DE RESPONDER FORMULARIO ---
+# Vista para responder un formulario
 @login_required(login_url='/accounts/login/')
 def formulario_respond_view(request, pk):
     formulario = get_object_or_404(Formulario, pk=pk)
@@ -126,8 +126,7 @@ def formulario_respond_view(request, pk):
 
     if request.method == 'POST':
         try:
-            # 1. Se recopilan todas las respuestas en un diccionario
-            # { 'id_pregunta': 'valor_respuesta', ... }
+            # Recopilación de respuestas en un diccionario
             respuestas_dict = {}
             
             for question in questions:
@@ -138,7 +137,7 @@ def formulario_respond_view(request, pk):
                     # Guardamos la respuesta usando la pk de la pregunta como clave
                     respuestas_dict[str(question.pk)] = data
 
-            # 2. Cargamos la llave pública
+            # Cargamos la llave pública
             key_path = os.path.join(settings.BASE_DIR, 'keys', 'public.pem')
             if not os.path.exists(key_path):
                 raise FileNotFoundError("No se encontró la llave pública (public.pem) en el servidor")
@@ -146,15 +145,15 @@ def formulario_respond_view(request, pk):
             public_key = RSA.import_key(open(key_path).read())
             cipher_rsa = PKCS1_OAEP.new(public_key)
 
-            # 3. Pasamos los datos a formato JSON y luego a bytes
+            # Pasamos los datos a formato JSON y luego a bytes
             json_data = json.dumps(respuestas_dict)
             bytes_data = json_data.encode('utf-8')
 
-            # 4. Se encriptan los dato
+            # Se encriptan los dato
             datos_encriptados = cipher_rsa.encrypt(bytes_data)
 
-            # 5. Se envian los votos encriptados
-            # Ya NO creamos objetos 'Respuesta'. Se guardan en un blob cifrado.
+            # Se envian los votos encriptados
+            # Ya NO creamos objetos Respuesta. Se guardan en un blob cifrado.
             EnvioFormulario.objects.create(
                 formulario=formulario, 
                 usuario=request.user,
@@ -173,7 +172,7 @@ def formulario_respond_view(request, pk):
 
 
 
-# --- 7. VISTA DE RESULTADOS ---
+# Vista de resultados de formulario
 # Aquí se desencriptan los datos
 @login_required(login_url='/accounts/login/')
 def formulario_results_view(request, pk):
@@ -253,7 +252,7 @@ def formulario_results_view(request, pk):
     context = {'formulario': formulario, 'results_data': results_data}
     return render(request, 'votacionC/formulario_results.html', context)
 
-# --- 8. VISTA DE BORRADO ---
+# Vista de formulario para elminar
 class FormularioDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
     model = Formulario
     template_name = 'votacionC/formulario_confirm_delete.html'
@@ -266,7 +265,7 @@ class FormularioDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.Dele
         messages.success(request, f'El formulario "{self.get_object().titulo}" ha sido eliminado.')
         return super().delete(request, *args, **kwargs)
 
-# --- 9. VISTAS DE AUTENTICACIÓN ---
+# Vista de autenticación
 def register_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -285,9 +284,9 @@ class CustomLoginView(LoginView):
         messages.success(self.request, f'¡Hola de nuevo, {form.get_user().username}!')
         return super().form_valid(form)
 
-# --- ¡AQUÍ ESTÁ LA CORRECCIÓN! ---
+# Vista de cierre de sesión
 class CustomLogoutView(LogoutView):
     def dispatch(self, request, *args, **kwargs):
-        # Usamos 'self.request' en lugar de 'self'
+        # Mensaje para cierre de sesión
         messages.info(self.request, 'Has cerrado sesión. ¡Vuelve pronto!')
         return super().dispatch(request, *args, **kwargs)

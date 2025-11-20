@@ -4,6 +4,7 @@ import os
 import sys
 import ssl
 
+# Sirve para desarrollo local con HTTPS
 if not hasattr(ssl, 'wrap_socket'):
     def dev_ssl_patch(sock, keyfile=None, certfile=None, server_side=False, ssl_version=ssl.PROTOCOL_TLS, **kwargs):
         context = ssl.SSLContext(ssl_version)

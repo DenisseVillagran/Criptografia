@@ -10,7 +10,7 @@ from Crypto.Cipher import PKCS1_OAEP
 
 from .models import Formulario, Question, Choice, EnvioFormulario, Respuesta
 
-# ... (ChoiceInline y QuestionInline se quedan IGUAL) ...
+
 class ChoiceInline(admin.TabularInline):
     model = Choice
     extra = 3
@@ -21,7 +21,7 @@ class QuestionInline(admin.StackedInline):
     inlines = [ChoiceInline]
     extra = 1
 
-# --- FORMULARIO ADMIN CON GRÁFICAS ---
+# Formulario Admin con gráficas 
 class FormularioAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'propietario', 'pub_date', 'is_closed', 'conteo_respuestas')
     list_filter = ['pub_date', 'propietario']
@@ -35,7 +35,7 @@ class FormularioAdmin(admin.ModelAdmin):
         return obj.envios.count()
     conteo_respuestas.short_description = "Total Respuestas"
 
-    # Sobrescribimos la vista para inyectar datos DESCIFRADOS
+    # 2. Sobrescribimos la vista para inyectar datos DESCIFRADOS
     def change_view(self, request, object_id, form_url='', extra_context=None):
         # Obtenemos el objeto formulario
         formulario = self.get_object(request, object_id)
@@ -71,7 +71,7 @@ class FormularioAdmin(admin.ModelAdmin):
                     except Exception as e:
                         print(f"Admin Error: No se pudo descifrar el envío {envio.id}: {e}")
 
-        # --- LÓGICA DE GRÁFICAS (Igual que en views.py) ---
+        # Lógica de las gráficas
         results_data = []
         questions = formulario.preguntas.all()
 
@@ -121,7 +121,7 @@ class FormularioAdmin(admin.ModelAdmin):
         
         return super().change_view(request, object_id, form_url, extra_context=extra_context)
 
-# Como ya no guardamos filas en 'Respuesta', el Inline ya no mostrará nada util
+# Como ya no guardamos filas en Respuesta, el Inline ya no mostrará nada util
 
 class EnvioFormularioAdmin(admin.ModelAdmin):
     list_display = ('id', 'formulario', 'usuario', 'fecha_envio', 'tiene_datos_cifrados')
