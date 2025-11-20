@@ -2,7 +2,15 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+import ssl
 
+if not hasattr(ssl, 'wrap_socket'):
+    def dev_ssl_patch(sock, keyfile=None, certfile=None, server_side=False, ssl_version=ssl.PROTOCOL_TLS, **kwargs):
+        context = ssl.SSLContext(ssl_version)
+        context.load_cert_chain(certfile, keyfile)
+        return context.wrap_socket(sock, server_side=server_side)
+    
+    ssl.wrap_socket = dev_ssl_patch
 
 def main():
     """Run administrative tasks."""
