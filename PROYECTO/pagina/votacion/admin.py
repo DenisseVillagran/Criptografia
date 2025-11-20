@@ -2,6 +2,12 @@ from django.contrib import admin
 from django.db.models import Count
 from collections import Counter
 import json
+import os
+from django.conf import settings
+from django.contrib import messages
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+
 from .models import Formulario, Question, Choice, EnvioFormulario, Respuesta
 
 # ... (ChoiceInline y QuestionInline se quedan IGUAL) ...
@@ -29,7 +35,7 @@ class FormularioAdmin(admin.ModelAdmin):
         return obj.envios.count()
     conteo_respuestas.short_description = "Total Respuestas"
 
-    # 2. Sobrescribimos la vista de edición para inyectar datos
+    # Sobrescribimos la vista para inyectar datos DESCIFRADOS
     def change_view(self, request, object_id, form_url='', extra_context=None):
         # Obtenemos el objeto formulario
         formulario = self.get_object(request, object_id)
@@ -38,14 +44,51 @@ class FormularioAdmin(admin.ModelAdmin):
         if not formulario:
             return super().change_view(request, object_id, form_url, extra_context)
 
+        # Intentamos cargar la llave privada
+        key_path = os.path.join(settings.BASE_DIR, 'keys', 'private.pem')
+        cipher_rsa = None
+        
+        if os.path.exists(key_path):
+            try:
+                private_key = RSA.import_key(open(key_path).read())
+                cipher_rsa = PKCS1_OAEP.new(private_key)
+            except Exception as e:
+                self.message_user(request, f"Error cargando llave privada: {e}", level=messages.ERROR)
+        else:
+            self.message_user(request, "Advertencia: No se encontró 'keys/private.pem'. No se pueden descifrar los resultados.", level=messages.WARNING)
+
+        # Obtenemos envios y desciframos en memoria
+        # Solo intentamos descifrar si tenemos el cifrador listo
+        votos_descifrados = []
+        if cipher_rsa:
+            envios = EnvioFormulario.objects.filter(formulario=formulario)
+            for envio in envios:
+                if envio.datos_cifrados:
+                    try:
+                        bytes_descifrados = cipher_rsa.decrypt(envio.datos_cifrados)
+                        json_data = json.loads(bytes_descifrados.decode('utf-8'))
+                        votos_descifrados.append(json_data)
+                    except Exception as e:
+                        print(f"Admin Error: No se pudo descifrar el envío {envio.id}: {e}")
+
         # --- LÓGICA DE GRÁFICAS (Igual que en views.py) ---
         results_data = []
         questions = formulario.preguntas.all()
 
         for question in questions:
+            q_id = str(question.pk)
+
             if question.tipo_pregunta == Question.QuestionType.MULTIPLE_CHOICE:
-                respuestas = Respuesta.objects.filter(pregunta=question)
-                conteo_votos = Counter(respuestas.values_list('opcion_seleccionada_id', flat=True))
+                # Extraer solo las respuestas para ESTA pregunta de todos los votos descifrados
+                # Si el voto tiene respuesta para esta pregunta, la tomamos
+                respuestas = [voto[q_id] for voto in votos_descifrados if q_id in voto]
+                
+                try:
+                    respuestas_ids = [int(r) for r in respuestas]
+                except ValueError:
+                    respuestas_ids = []
+
+                conteo_votos = Counter(respuestas_ids)
                 
                 labels = []
                 data = []
@@ -59,51 +102,44 @@ class FormularioAdmin(admin.ModelAdmin):
                     'type': 'CHOICE',
                     'labels': json.dumps(labels),
                     'data': json.dumps(data),
-                    'total_votes': respuestas.count()
+                    'total_votes': len(respuestas_ids)
                 })
+
             elif question.tipo_pregunta == Question.QuestionType.OPEN_TEXT:
-                respuestas = Respuesta.objects.filter(pregunta=question).values_list('respuesta_texto', flat=True)
-                # Limitamos a las últimas 5 respuestas para no saturar el admin
+                respuestas_texto = [voto[q_id] for voto in votos_descifrados if q_id in voto]
+                
                 results_data.append({
                     'question': question,
                     'type': 'TEXT',
-                    'text_responses': list(respuestas)[:5], 
-                    'total_count': len(respuestas)
+                    'text_responses': respuestas_texto[:5], # Solo las últimas 5 para no saturar
+                    'total_count': len(respuestas_texto)
                 })
 
-        # Agregamos los datos al contexto
+        # Para el contexto
         extra_context = extra_context or {}
         extra_context['results_data'] = results_data
         
         return super().change_view(request, object_id, form_url, extra_context=extra_context)
 
-
-# ... (RespuestaInline y EnvioFormularioAdmin se quedan IGUAL) ...
-class RespuestaInline(admin.TabularInline):
-    model = Respuesta
-    extra = 0 
-    can_delete = False 
-    fields = ('get_pregunta', 'get_respuesta')
-    readonly_fields = ('get_pregunta', 'get_respuesta')
-
-    def get_pregunta(self, obj):
-        return obj.pregunta.pregunta_texto
-    get_pregunta.short_description = "Pregunta"
-
-    def get_respuesta(self, obj):
-        if obj.opcion_seleccionada:
-            return obj.opcion_seleccionada.choice_text
-        return obj.respuesta_texto
-    get_respuesta.short_description = "Respuesta del Usuario"
+# Como ya no guardamos filas en 'Respuesta', el Inline ya no mostrará nada util
 
 class EnvioFormularioAdmin(admin.ModelAdmin):
-    list_display = ('id', 'formulario', 'usuario', 'fecha_envio')
+    list_display = ('id', 'formulario', 'usuario', 'fecha_envio', 'tiene_datos_cifrados')
     list_filter = ('formulario', 'fecha_envio')
     search_fields = ('usuario__username', 'formulario__titulo')
-    inlines = [RespuestaInline]
     
+    # Quitamos el inline de respuestas porque ahora todo está en el blob cifrado
+    # inlines = [RespuestaInline] 
+
     def has_change_permission(self, request, obj=None):
+        # Solo lectura para asegurar integridad
         return False
+    
+    def tiene_datos_cifrados(self, obj):
+        return bool(obj.datos_cifrados)
+    tiene_datos_cifrados.boolean = True
+    tiene_datos_cifrados.short_description = "¿Cifrado?"
 
 admin.site.register(Formulario, FormularioAdmin)
 admin.site.register(EnvioFormulario, EnvioFormularioAdmin)
+admin.site.register(Question)
