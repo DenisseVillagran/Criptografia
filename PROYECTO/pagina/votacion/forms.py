@@ -20,7 +20,7 @@ class FormularioForm(forms.ModelForm):
             'duration': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'value': 7})
         }
 
-# --- ¡NUEVO FORMULARIO! ---
+# Nuevo formulario para añadir preguntas
 class QuestionForm(forms.ModelForm):
     """
     Formulario simple para añadir una nueva pregunta (Question)
