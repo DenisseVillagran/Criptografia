@@ -1,31 +1,156 @@
-INSTRUCCIONES PARA PROBAR EL PROYECTO:
+# Manual para ejecutar la página
 
-1. Correr el entorno virtual "polling":
+---
+
+## 📌 Requisitos previos
+
+* Linux (Debian/Ubuntu o derivados)
+* Python 3
+* Git
+* Navegador (recomendado: abrir en modo incógnito o borrar caché para evitar errores)
+
+---
+
+## 📥 1. Clonar el repositorio
+
+```bash
+git clone <URL_DEL_REPOSITORIO>
+cd <NOMBRE_DEL_REPOSITORIO>
+```
+
+---
+
+## 🛠️ 2. Crear y activar el entorno virtual
+
+Instalar virtualenv si no lo tienes:
+
+```bash
+sudo apt install python3-virtualenv
+```
+
+Crear el entorno:
+
+```bash
+virtualenv polling
+```
+
+Activarlo:
+
+```bash
 source polling/bin/activate
+```
 
-2. Entrar a la direccion de manage.py (cd pagina)
-python manage.py runserver
+---
 
-3. Entrar a la direccion
-http://127.0.0.1:8000/
+## 📂 3. Entrar a la carpeta del proyecto
 
-http://127.0.0.1:8000/votacion -> lugar donde el usuario vota
-http://127.0.0.1:8000/admin -> lugar donde se manejan las preguntas y se recolecta info, se pueden editar cosas,etc.
+```bash
+cd pagina/
+```
+
+---
+
+## 📦 4. Instalar dependencias
+
+```bash
+pip install Django
+pip install django-sslserver
+pip install pycryptodome
+```
+
+---
+
+## 🚀 5. Ejecutar el servidor en HTTPS
+
+```bash
+python manage.py runsslserver
+```
+
+Al ejecutar, abre tu navegador **en modo incógnito** o **borra el caché**.
+
+La página estará disponible en:
+
+```
+https://127.0.0.1:8000
+```
+
+---
+
+# English Version
+
+# Manual to run the page
 
 
-PARA LA PARTE DE CIFRADO
-1. Actualizar migraciones del proyecto (para envio formulario):
-> python manage.py makemigrations
-> python manage.py migrate
+---
 
-2. Se creó una encuesta llamada 'Prueba2'.
-   Para rapido, crear un nuevo usuario y votar en esa encuesta
+## 📌 Requirements
 
-3. Entrar como admin y comprobar que se siguen actualizando correctamente los votos
+* Linux (Debian/Ubuntu or similar)
+* Python 3
+* Git
+* Browser (open in incognito or clear cache)
 
-(Opcional)
-4. Para verificar el cifrado, ejecutar el archivo auditor_db.py
-   Este archivo trata de obtener los archivos haciendo una consulta
-   Cada que se haga un nuevo voto, se debe ver el contenido del voto cifrado
+---
 
-El archivo generar_llaves se ejecuta una sola vez al inicio, ya no es necesario ejectuarlo
+## 📥 1. Clone the repository
+
+```bash
+git clone <URL_OF_REPOSITORY>
+cd <REPOSITORY_NAME>
+```
+
+---
+
+## 🛠️ 2. Create and activate the virtual environment
+
+Install virtualenv:
+
+```bash
+sudo apt install python3-virtualenv
+```
+
+Create the environment:
+
+```bash
+virtualenv polling
+```
+
+Activate it:
+
+```bash
+source polling/bin/activate
+```
+
+---
+
+## 📂 3. Enter the project folder
+
+```bash
+cd pagina/
+```
+
+---
+
+## 📦 4. Install dependencies
+
+```bash
+pip install Django
+pip install django-sslserver
+pip install pycryptodome
+```
+
+---
+
+## 🚀 5. Start the HTTPS server (loopback)
+
+```bash
+python manage.py runsslserver
+```
+
+Then open your browser in **incognito mode** or **clear the cache** 
+
+The page will be available at:
+
+```
+https://127.0.0.1:8000
+```
