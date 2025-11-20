@@ -17,6 +17,7 @@
 ```bash
 git clone <URL_DEL_REPOSITORIO>
 cd <NOMBRE_DEL_REPOSITORIO>
+cd PROYECTO
 ```
 
 ---
