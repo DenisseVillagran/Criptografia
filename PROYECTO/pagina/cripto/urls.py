@@ -8,10 +8,8 @@ urlpatterns = [
     path('', RedirectView.as_view(url='/accounts/login/', permanent=False), name='home'),
     path('admin/', admin.site.urls),
     
-    # ¡Descomentada!
     path('votacion/', include('votacion.urls')), 
     
-    # ¡Descomentadas!
     path('accounts/login/', votacion_views.CustomLoginView.as_view(), name='login'),
     path('accounts/logout/', votacion_views.CustomLogoutView.as_view(next_page='/'), name='logout'),
     path('accounts/register/', votacion_views.register_view, name='register'),

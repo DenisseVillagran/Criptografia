@@ -4,7 +4,6 @@ from collections import Counter
 import json
 from .models import Formulario, Question, Choice, EnvioFormulario, Respuesta
 
-# ... (ChoiceInline y QuestionInline se quedan IGUAL) ...
 class ChoiceInline(admin.TabularInline):
     model = Choice
     extra = 3
@@ -15,7 +14,7 @@ class QuestionInline(admin.StackedInline):
     inlines = [ChoiceInline]
     extra = 1
 
-# --- FORMULARIO ADMIN CON GRÁFICAS ---
+# Formulario Admin con gráficas 
 class FormularioAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'propietario', 'pub_date', 'is_closed', 'conteo_respuestas')
     list_filter = ['pub_date', 'propietario']
@@ -38,7 +37,7 @@ class FormularioAdmin(admin.ModelAdmin):
         if not formulario:
             return super().change_view(request, object_id, form_url, extra_context)
 
-        # --- LÓGICA DE GRÁFICAS (Igual que en views.py) ---
+        # Lógica de las gráficas
         results_data = []
         questions = formulario.preguntas.all()
 
@@ -78,7 +77,6 @@ class FormularioAdmin(admin.ModelAdmin):
         return super().change_view(request, object_id, form_url, extra_context=extra_context)
 
 
-# ... (RespuestaInline y EnvioFormularioAdmin se quedan IGUAL) ...
 class RespuestaInline(admin.TabularInline):
     model = Respuesta
     extra = 0 
