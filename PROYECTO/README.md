@@ -78,6 +78,14 @@ https://127.0.0.1:8000
 
 ---
 
+## 🔧 Funcionamiento general del sistema
+
+<p align="center">
+    <img alt="jpg" width="500px" src="funcionamiento.jpg" />
+</p>
+
+---
+
 # Manual to run the page
 
 
@@ -155,3 +163,10 @@ The page will be available at:
 ```
 https://127.0.0.1:8000
 ```
+---
+
+## 🔧 General System Functioning
+
+<p align="center">
+    <img alt="jpg" width="500px" src="funcionamiento.jpg" />
+</p>
