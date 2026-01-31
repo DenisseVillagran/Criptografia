@@ -60,9 +60,9 @@ Each practice or research project is located in its own folder with its respecti
 | 01 | [Practice 01 – Caesar Cipher](./Practica1_CifradoCesar) |
 | 02 | [Practice 02 - Vigenere/Kasiski Cipher](./Practica2_Vigenere) |
 | 03 | [Practice 03 - Playfair Cipher](./Practica3_CifradoPlayfair) |
-| 04 | [Practuce 04 - Vernam Cipher](./Practica4_Vernam) |
-| 05 | [Práctica 05 - Enigma Code Research](./Practica5_InvestigaciónEnigma) |
-| 06 | [Práctica 06 - Hill Cipher](./Practica6_CifradoHill) |
-| 07 | [Práctica 07 - Extended Euclidean Algorithm](./Practica7_EuclidesExtendido) |
+| 04 | [Practice 04 - Vernam Cipher](./Practica4_Vernam) |
+| 05 | [Practice 05 - Enigma Code Research](./Practica5_InvestigaciónEnigma) |
+| 06 | [Practice 06 - Hill Cipher](./Practica6_CifradoHill) |
+| 07 | [Practice 07 - Extended Euclidean Algorithm](./Practica7_EuclidesExtendido) |
 | 08 | [Final Project](./PROYECTO) |
 
